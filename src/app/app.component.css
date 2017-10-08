@@ -1,0 +1,38 @@
+.example-card {
+    width: 400px;
+    margin: 24px;
+}
+
+.example-header-image {
+    background-size: cover;
+}
+
+.mat-card-header {
+    align-items: center;
+}
+
+.mat-card {
+    padding-top: 0;
+}
+
+.mat-card-avatar {
+    height: 50px;
+    width: 50px;
+}
+
+.mat-card-title, .mat-card-subtitle {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.mat-card-title h2 {
+    margin: 0;
+}
+
+.mat-card-title {
+    margin-top: 18px;
+}
+
+.mat-card-subtitle {
+    margin-bottom: 18px;
+}
