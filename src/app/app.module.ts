@@ -12,6 +12,8 @@ import { MatCardModule, MatButtonModule } from '@angular/material';
 // Import your library
 import { Ng2EmojiModule } from 'ng2-emoji';
 import { PerfectScrollbarModule, PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { DialogModule } from './dialog/dialog.module';
+import { DialogComponent } from './dialog/dialog.component';
 
 const PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -25,15 +27,17 @@ const PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     BrowserAnimationsModule,
     MatCardModule,
+    MatButtonModule,
+    DialogModule,
     HttpClientModule,
     HttpModule,
-    MatButtonModule,
     Ng2EmojiModule.forRoot(),
     InfiniteScrollModule,
     PerfectScrollbarModule.forRoot(PERFECT_SCROLLBAR_CONFIG)
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DialogComponent]
 })
 export class AppModule { }
 platformBrowserDynamic().bootstrapModule(AppModule);

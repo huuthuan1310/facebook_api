@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import linkifyStr from 'linkifyjs/string';
+import { MatDialog } from '@angular/material';
+import { DialogComponent } from './dialog/dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,10 @@ export class AppComponent implements OnInit {
   fields = 'full_picture,from,caption,description,message,updated_time,likes,type,source,link,created_time,shares,status_type,with_tags,message_tags,comments,permalink_url';
   limit = 10;
   loading = true;
-  constructor(public http: Http, private cd: ChangeDetectorRef) { }
+  constructor(
+    public http: Http,
+    private cd: ChangeDetectorRef,
+    public dialog: MatDialog) { }
   ngOnInit() {
     this.firstLoad();
   };
@@ -39,7 +44,7 @@ export class AppComponent implements OnInit {
   }
 
   onScrollUp() {
-    if (this.list.length > 100) {
+    if (this.list.length > this.limit) {
       this.loading = true;
       this.firstLoad();
     }
@@ -60,6 +65,17 @@ export class AppComponent implements OnInit {
       this.list = obj;
       this.loading = false;
       console.log(data.json());
+    });
+  }
+
+  openDialog(item): void {
+    let dialogRef = this.dialog.open(DialogComponent, {
+      data: { item: item }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // this.animal = result;
     });
   }
 }
