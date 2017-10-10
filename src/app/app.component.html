@@ -1,70 +1,88 @@
-<div [@enterAnimation] *ngIf="loading" style="width: 100vw;height: 100vh;display: flex;justify-content: center;">
-  <img src="assets/loading.svg">
+<div *ngIf="loading">
+  <div [@enterAnimation] style="width: 100vw;height: 100vh;display: flex;justify-content: center;flex-direction:column; align-items:center">
+    <img src="assets/facebook-icon.svg" style="width: 35px;">
+    <img src="assets/Ellipsis.gif" style="width: 35px;">
+  </div>
 </div>
 <!-- <div style="width:70%; margin:auto"> -->
 <!-- <perfect-scrollbar [config]="config"> -->
-<div [@enterAnimation] style="display: flex;justify-content: space-around;padding-top: 5px;background-color: #4267b2;color: white;align-items: center;"
-  *ngIf="!loading">
-  <img (click)="submit('leothuan')" src="assets/facebook.jpg" style="width: 24px;height: 24px;cursor:pointer;">
-  <div>
-    <mat-form-field class="example-full-width">
-      <input (keyup.enter)="submit(fid.value)" #fid matInput placeholder="Facebook ID">
-    </mat-form-field>
-    <button mat-button (click)="submit(fid.value)">Quất!</button>
-  </div>
-  <div>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="submit(1173636692750000)">
-        <mat-icon>photo_library</mat-icon>
-        <span>Vietnam Sexy Bae</span>
+<div *ngIf="!loading">
+  <div [@enterAnimation] style="display: flex;justify-content: space-around;padding-top: 5px;background-color: #4267b2;color: white;align-items: center;">
+    <img (click)="submit('leothuan')" src="assets/facebook.jpg" style="width: 24px;height: 24px;cursor:pointer;">
+    <div>
+      <mat-form-field class="example-full-width">
+        <input (keyup.enter)="submit(fid.value)" #fid matInput placeholder="Facebook ID">
+      </mat-form-field>
+      <button mat-button (click)="submit(fid.value)">Quất!</button>
+    </div>
+    <div>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <button mat-menu-item (click)="submit(330649580683683)">
-        <mat-icon>photo_library</mat-icon>
-        <span>Another Gril</span>
-      </button>
-      <button mat-menu-item (click)="submit(374542692746512)">
-        <mat-icon>photo_library</mat-icon>
-        <span>Vietnam Gaming Show</span>
-      </button>
-    </mat-menu>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="submit('laptrinhvien.io')">
+          <mat-icon>photo_library</mat-icon>
+          <span>Laptrinhvien.io</span>
+        </button>
+        <button mat-menu-item (click)="submit('janetoict')">
+          <mat-icon>photo_library</mat-icon>
+          <span>JANETO</span>
+        </button>
+        <button mat-menu-item (click)="submit(1173636692750000)">
+          <mat-icon>photo_library</mat-icon>
+          <span>Vietnam Sexy Bae</span>
+        </button>
+        <button mat-menu-item (click)="submit(330649580683683)">
+          <mat-icon>photo_library</mat-icon>
+          <span>Another Gril</span>
+        </button>
+        <button mat-menu-item (click)="submit(374542692746512)">
+          <mat-icon>photo_library</mat-icon>
+          <span>Vietnam Gaming Show</span>
+        </button>
+      </mat-menu>
+    </div>
   </div>
-</div>
-<div id="content" *ngIf="!loading" style="height:calc(100vh - 71px);overflow-y:scroll" infinite-scroll data-infinite-scroll
-  debounce [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()"
-  (scrolledUp)="onScrollUp()" [scrollWindow]="false">
-  <div style="display:flex; flex-wrap: wrap;justify-content: center;align-items: baseline;">
-    <mat-card [@enterAnimation] *ngFor="let item of list; let i = index; trackBy: index" class="example-card">
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image" [ngStyle]="{'background-image':'url(https://graph.facebook.com/'+ item.from?.id +'/picture?type=large)'}">
-        </div>
-        <mat-card-title>
-          <h2>
-            <a style="text-decoration: none; color: #4267b2;" href="{{'https://facebook.com/' + item.from?.id}}" target="_blank">{{item.from?.name}}</a>
-          </h2>
-        </mat-card-title>
-        <mat-card-subtitle>{{item.created_time | date:"'Ngày' MM 'tháng' dd 'năm' yyyy lúc H:M"}}</mat-card-subtitle>
-      </mat-card-header>
-      <img style="cursor:pointer" (click)="openDialog(item)" *ngIf="item.type==='photo'" mat-card-image src="{{item.full_picture}}" alt="Photo of a Shiba Inu">
-      <video *ngIf="item.type==='video'" style="width: 100%;height: auto;" controls>
-        <source src="{{item.source}}" type="video/mp4">
-        <source src="{{item.source}}" type="video/ogg"> Your browser does not support the video tag.
-      </video>
-      <mat-card-content>
-        <p style="white-space: pre-wrap;" [innerHTML]="item.message ? item.message : '' | emojis"></p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button>{{item.likes?.count}} LIKES</button>
-        <button mat-button>{{item.comments ? item.comments.count : 0}} COMMENTS</button>
-        <button mat-button>{{item.shares ? item.shares.count : 0}} SHARES</button>
-      </mat-card-actions>
-    </mat-card>
+  <div id="content" style="height:calc(100vh - 71px);overflow-y:scroll" infinite-scroll data-infinite-scroll debounce [infiniteScrollDistance]="2"
+    [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScroll()" (scrolledUp)="onScrollUp()" [scrollWindow]="false">
+    <div style="display:flex; flex-wrap: wrap;justify-content: center;align-items: baseline;">
+      <mat-card [@enterAnimation] *ngFor="let item of list; let i = index; trackBy: index" class="example-card">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image" [ngStyle]="{'background-image':'url(https://graph.facebook.com/'+ item.from?.id +'/picture?type=large)'}">
+          </div>
+          <mat-card-title>
+            <h2>
+              <a style="text-decoration: none; color: #4267b2;" href="{{'https://facebook.com/' + item.from?.id}}" target="_blank">{{item.from?.name}}</a>
+            </h2>
+          </mat-card-title>
+          <mat-card-subtitle>{{item.created_time | date:"'Ngày' MM 'tháng' dd 'năm' yyyy lúc H:M"}}</mat-card-subtitle>
+        </mat-card-header>
+        <img style="cursor:pointer" (click)="openDialog(item)" *ngIf="item.type==='photo'" mat-card-image src="{{item.full_picture}}"
+          alt="Photo of LeoNguyen">
+        <video *ngIf="item.type==='video'" style="width: 100%;height: auto;" controls>
+          <source src="{{item.source}}" type="video/mp4">
+          <source src="{{item.source}}" type="video/ogg"> Your browser does not support the video tag.
+        </video>
+        <mat-card-content>
+          <p style="white-space: pre-wrap;" [innerHTML]="item.message ? item.message : '' | emojis"></p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>{{item.likes?.count}}
+            <mat-icon style="font-size: 20px;">thumb_up</mat-icon> {{item.likes?.count > 1 ? 'LIKES' : 'LIKE'}}</button>
+          <button mat-button>{{item.comments ? item.comments.count : 0}}
+            <mat-icon style="font-size: 20px;">comment</mat-icon> {{item.comments?.count > 1 ? 'COMMENTS' : 'COMMENT'}}</button>
+          <button mat-button>{{item.shares ? item.shares.count : 0}}
+            <mat-icon style="font-size: 20px;">share</mat-icon> {{item.shares?.count > 1 ? 'SHARES' : 'SHARE'}}</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div style="display:flex; justify-content: center;" [@enterAnimation] *ngIf="loadMore">
+      <img style="width: 80px;height: 80px;" src="assets/loading.svg">
+    </div>
   </div>
-  <div style="display:flex; justify-content: center;" [@enterAnimation] *ngIf="loadMore">
-    <img style="width: 80px;height: 80px;" src="assets/loading.svg">
-  </div>
+  <button color="" (click)="scrollToTop()" mat-mini-fab style="position: absolute;bottom: 14px;right: 33px;">
+    <mat-icon aria-label="Up to top">expand_less</mat-icon>
+  </button>
 </div>
 <!-- </perfect-scrollbar> -->
 <!-- </div> -->

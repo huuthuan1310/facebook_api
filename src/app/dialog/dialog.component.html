@@ -1,4 +1,5 @@
 <!--component html goes here -->
+<i style="position: absolute;right: 0;top: 0;cursor:pointer;" (click)="onNoClick()" class="material-icons">close</i>
 <div style="display:flex; justify-content:center">
   <img *ngIf="data.item.type==='photo'" src="{{data.item.full_picture}}" alt="Photo of a Shiba Inu" style="width: 100%;height: 100%;">
   <video *ngIf="data.item.type==='video'" style="width: 100%;height: 100%;" controls>
