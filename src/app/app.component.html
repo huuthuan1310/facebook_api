@@ -28,7 +28,7 @@
           <mat-icon>photo_library</mat-icon>
           <span>JANETO</span>
         </button>
-        <button mat-menu-item (click)="submit(1173636692750000)">
+        <button mat-menu-item (click)="submit('VNsbGroup')">
           <mat-icon>photo_library</mat-icon>
           <span>Vietnam Sexy Bae</span>
         </button>
@@ -39,6 +39,10 @@
         <button mat-menu-item (click)="submit(374542692746512)">
           <mat-icon>photo_library</mat-icon>
           <span>Vietnam Gaming Show</span>
+        </button>
+        <button mat-menu-item (click)="submit('HoneyNailSpa.Salon')">
+          <mat-icon>photo_library</mat-icon>
+          <span>Honey Nails</span>
         </button>
       </mat-menu>
     </div>
@@ -55,7 +59,7 @@
               <a style="text-decoration: none; color: #4267b2;" href="{{'https://facebook.com/' + item.from?.id}}" target="_blank">{{item.from?.name}}</a>
             </h2>
           </mat-card-title>
-          <mat-card-subtitle>{{item.created_time | date:"'Ngày' MM 'tháng' dd 'năm' yyyy lúc H:M"}}</mat-card-subtitle>
+          <mat-card-subtitle>{{item.created_time | date:"'Ngày' dd 'tháng' MM 'năm' yyyy lúc H:M"}}</mat-card-subtitle>
         </mat-card-header>
         <img style="cursor:pointer" (click)="openDialog(item)" *ngIf="item.type==='photo'" mat-card-image src="{{item.full_picture}}"
           alt="Photo of LeoNguyen">
@@ -69,7 +73,7 @@
         <mat-card-actions>
           <button mat-button>{{item.likes?.count}}
             <mat-icon style="font-size: 20px;">thumb_up</mat-icon> {{item.likes?.count > 1 ? 'LIKES' : 'LIKE'}}</button>
-          <button mat-button>{{item.comments ? item.comments.count : 0}}
+          <button (click)="openDialog(item)" mat-button>{{item.comments ? item.comments.count : 0}}
             <mat-icon style="font-size: 20px;">comment</mat-icon> {{item.comments?.count > 1 ? 'COMMENTS' : 'COMMENT'}}</button>
           <button mat-button>{{item.shares ? item.shares.count : 0}}
             <mat-icon style="font-size: 20px;">share</mat-icon> {{item.shares?.count > 1 ? 'SHARES' : 'SHARE'}}</button>

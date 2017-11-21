@@ -1,3 +1,4 @@
+import { environment } from './../environments/environment.prod';
 import { Component, OnInit } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import linkifyStr from 'linkifyjs/string';
@@ -6,7 +7,6 @@ import { DialogComponent } from './dialog/dialog.component';
 import { trigger, style, animate, transition } from '@angular/animations';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-
 @Component({
   selector: 'app-root',
   animations: [
@@ -30,11 +30,11 @@ export class AppComponent implements OnInit {
   title = 'app';
   list: any;
   paging: any;
-  token = 'EAAAAUaZA8jlABANGd6IpXk0e6g9IzoGRX6vxlZATbnMOq6NmZBKr70etmzPolCRZBwXBjjtYrvXQ0noH1sWKeFgQRiRjOPBEJZBOQZBV732u6L24LsZCffk0CnAPkz8dF9fLlk0YwohMrK4nXXEbo4CORIIQloW5OF5shcCpePKg5rTNmbmkU8B';
+  token = environment.access_token;
   fields = 'full_picture,from,caption,description,message,updated_time,likes,type,source,link,created_time,shares,status_type,with_tags,message_tags,comments,permalink_url';
-  limit = 100;
+  limit = 10;
   loading = true;
-  facebookId = 'leothuan';
+  facebookId = 'HoneyNailSpa.Salon';
   loadMore = false;
   endPre = false;
   endNxt = false;
@@ -91,46 +91,46 @@ export class AppComponent implements OnInit {
   }
 
   onScrollUp() {
-    // if (this.list.length > this.limit) {
-    if (!this.endPre && this.paging && this.paging.previous) {
-      this.loadMore = true;
-      let page = this.paging.previous.replace('limit=' + this.limit, 'limit=6');
-      this.http.get(page).subscribe(data => {
-        // Read the result field from the JSON response.
-        if (data && data.json()) {
-          if (data.json().paging) {
-            this.paging = data.json().paging;
-            this.endNxt = false;
-          } else {
-            this.endPre = true;
-          }
-          if (data && data.json().data.length > 0) {
-            let obj = [];
-            let _obj = _.clone(this.list);
-            var options = {/* … */ };
-            this.paging = data.json().paging;
-            for (let i = 0; i < data.json().data.length; i++) {
-              let item = data.json().data[i];
-              item.message ? item.message = linkifyStr(item.message, options) : '';
-              obj.push(item);
-            }
-            _obj.unshift(obj);
-            if (_obj.length > this.limit) {
-              _obj.splice((_obj.length - 5), 6);
-            }
-            this.list = _obj;
-            this.loadMore = false;
-            if (obj.length > this.limit) {
-              obj.splice(0, 6);
-            }
-            console.log(this.list);
-          }
-        }
-      });
-    } else {
-      console.log('hết!');
-    }
+    // // if (this.list.length > this.limit) {
+    // if (!this.endPre && this.paging && this.paging.previous) {
+    //   this.loadMore = true;
+    //   let page = this.paging.previous.replace('limit=' + this.limit, 'limit=6');
+    //   this.http.get(page).subscribe(data => {
+    //     // Read the result field from the JSON response.
+    //     if (data && data.json()) {
+    //       if (data.json().paging) {
+    //         this.paging = data.json().paging;
+    //         this.endNxt = false;
+    //       } else {
+    //         this.endPre = true;
+    //       }
+    //       if (data && data.json().data.length > 0) {
+    //         let obj = [];
+    //         let _obj = _.clone(this.list);
+    //         var options = {/* … */ };
+    //         this.paging = data.json().paging;
+    //         for (let i = 0; i < data.json().data.length; i++) {
+    //           let item = data.json().data[i];
+    //           item.message ? item.message = linkifyStr(item.message, options) : '';
+    //           obj.push(item);
+    //         }
+    //         _obj.unshift(obj);
+    //         if (_obj.length > this.limit) {
+    //           _obj.splice((_obj.length - 5), 6);
+    //         }
+    //         this.list = _obj;
+    //         this.loadMore = false;
+    //         if (obj.length > this.limit) {
+    //           obj.splice(0, 6);
+    //         }
+    //         console.log(this.list);
+    //       }
+    //     }
+    //   });
+    // } else {
+    //   console.log('hết!');
     // }
+    // // }
   }
 
   firstLoad(facebookId, scrollTop?) {
@@ -144,10 +144,34 @@ export class AppComponent implements OnInit {
       for (let i = 0; i < data.json().data.length; i++) {
         let item = data.json().data[i];
         item.message ? item.message = linkifyStr(item.message, options) : '';
+        let comments = item.comments;
+        if (comments) {
+          let _data = comments.data;
+          if (_data) {
+            for (let i = 0; i < _data.length; i++) {
+              let cmt = _data[i];
+              if (cmt.message_tags && cmt.message_tags.length > 0) {
+                for (let y = 0; y < cmt.message_tags.length; y++) {
+                  let mes_tag = cmt.message_tags[y];
+                  cmt.message = cmt.message.replace(mes_tag.name, '<a style="text-decoration: none; color: #4267b2;" href="https://facebook.com/' + mes_tag.id + '" target="_blank">' + mes_tag.name + '</a>');
+                }
+              }
+            }
+          }
+        }
         obj.push(item);
       }
       this.dataStore.data = _.clone(obj);
-      this.list = this.dataStore.data.splice(this.numberItemsInFirstLoad, this.dataStore.data.length - this.numberItemsInFirstLoad);
+      // this.list = this.dataStore.data.splice(this.numberItemsInFirstLoad, this.dataStore.data.length - this.numberItemsInFirstLoad);
+      this.list = this.dataStore.data;
+
+      this.paging = data.json().paging;
+      for (let i = 0; i < data.json().data.length; i++) {
+        let item = data.json().data[i];
+        item.message ? item.message.linkify(options) : '';
+        // item.message.linkify(options);
+        obj.push(item);
+      }
       this.indexInDataStore = this.numberItemsInFirstLoad - 1;
       this.loading = false;
       scrollTop ? this.scrollToTop() : '';
@@ -160,7 +184,12 @@ export class AppComponent implements OnInit {
   openDialog(item): void {
     let dialogRef = this.dialog.open(DialogComponent, {
       data: { item: item },
-      backdropClass: 'dialog'
+      // backdropClass: 'dialog',
+      hasBackdrop: false,
+      width: '100vw',
+      height: '100vh',
+      minWidth: '100vw',
+      minHeight: '100vh'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -171,6 +200,7 @@ export class AppComponent implements OnInit {
 
   submit(facebookId) {
     if (facebookId) {
+      this.loading = true;
       this.facebookId = facebookId;
       this.firstLoad(this.facebookId, true);
     }
@@ -182,7 +212,7 @@ export class AppComponent implements OnInit {
   }
 
   getLoadMore(isNext) {
-    if (!this.endPre && this.paging && this.paging.previous) {
+    if (!this.endPre && this.paging && this.paging.previous || !this.endNxt && this.paging && this.paging.next) {
       this.loadMore = true;
       let page = isNext ? this.paging.next.replace('limit=' + this.limit, 'limit=' + this.numberLoadMore) :
         this.paging.previous.replace('limit=' + this.limit, 'limit=' + this.numberLoadMore);
@@ -214,6 +244,8 @@ export class AppComponent implements OnInit {
           }
         }
       });
+    } else {
+      console.log('hết');
     }
   }
 
@@ -221,6 +253,8 @@ export class AppComponent implements OnInit {
     this.http.get(url).subscribe(data => {
       // Read the result field from the JSON response.
       callback(data);
+    }, err => {
+      console.log(err);
     });
   }
 }
