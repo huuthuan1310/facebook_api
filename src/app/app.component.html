@@ -47,8 +47,8 @@
       </mat-menu>
     </div>
   </div>
-  <div id="content" style="height:calc(100vh - 71px);overflow-y:scroll" infinite-scroll data-infinite-scroll debounce [infiniteScrollDistance]="2"
-    [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScroll()" (scrolledUp)="onScrollUp()" [scrollWindow]="false">
+  <div id="content" style="height:calc(100vh - 71px);overflow-y:scroll" infinite-scroll data-infinite-scroll debounce [infiniteScrollDistance]="1"
+    [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="0" (scrolled)="onScroll()" (scrolledUp)="onScrollUp()" [scrollWindow]="false">
     <div style="display:flex; flex-wrap: wrap;justify-content: center;align-items: baseline;">
       <mat-card [@enterAnimation] *ngFor="let item of list; let i = index; trackBy: index" class="example-card">
         <mat-card-header>

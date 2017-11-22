@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
   paging: any;
   token = environment.access_token;
   fields = 'full_picture,from,caption,description,message,updated_time,likes,type,source,link,created_time,shares,status_type,with_tags,message_tags,comments,permalink_url';
-  limit = 10;
+  limit = 50;
   loading = true;
   facebookId = 'HoneyNailSpa.Salon';
   loadMore = false;
@@ -40,8 +40,9 @@ export class AppComponent implements OnInit {
   endNxt = false;
   dataStore: any;
   indexInDataStore = 0;
-  numberItemsInFirstLoad = 12;
+  numberItemsInFirstLoad = 15;
   numberLoadMore = 6;
+  numberEndLoadMore = 0;
   constructor(
     public http: Http,
     public dialog: MatDialog) { }
@@ -50,99 +51,53 @@ export class AppComponent implements OnInit {
   };
 
   onScroll() {
-    // if (!this.endNxt && this.paging && this.paging.next) {
     this.loadMore = true;
-    // let page = this.paging.next.replace('limit=' + this.limit, 'limit=6');
-    // this.http.get(page).subscribe(data => {
-    // Read the result field from the JSON response.
-    // if (data && data.json()) {
-    // if (data.json().paging) {
-    //   this.paging = data.json().paging;
-    //   this.endPre = false;
-    // } else {
-    //   this.endNxt = true;
-    // }
     if (this.dataStore.data.length > 0) {
-      // let obj = _.clone(this.list);
-      // var options = {/* … */ };
-      // for (let i = 0; i < data.json().data.length; i++) {
-      //   let item = data.json().data[i];
-      //   item.message ? item.message = linkifyStr(item.message, options) : '';
-      //   obj.push(item);
-      // }
-      // if (obj.length > this.limit) {
-      // obj.splice(0, 6);
-      // }
-      // this.list = obj;
-      // console.log(this.list);
-      if ((this.indexInDataStore + this.numberLoadMore) <= this.dataStore.data.length) {
-        this.indexInDataStore = this.indexInDataStore + this.numberLoadMore;
-        this.list = _.clone(this.dataStore.data.splice(this.indexInDataStore, this.numberLoadMore));
+      if (this.dataStore.data.length - this.numberEndLoadMore >= this.numberLoadMore) {
+        this.indexInDataStore += this.numberLoadMore;
+        this.numberEndLoadMore += this.numberLoadMore;
+        this.list = _.clone(this.dataStore.data.slice(this.indexInDataStore, this.numberEndLoadMore));
+      } else {
+        console.log('ok');
+        this.indexInDataStore += this.numberLoadMore;
+        this.numberEndLoadMore += this.dataStore.data.length - this.numberEndLoadMore;
+        this.list = _.clone(this.dataStore.data.slice(this.indexInDataStore, this.numberEndLoadMore));
+      }
+      if (this.dataStore.data.length - this.numberEndLoadMore === 0) {
+        console.log('end');
+      }
+      this.loadMore = false;
+    } else {
+
+    }
+  }
+
+  onScrollUp() {
+    if (this.dataStore.data.length > 0) {
+      if ((this.indexInDataStore - this.numberLoadMore) <= this.dataStore.data.length
+        && this.indexInDataStore - this.numberLoadMore >= 0) {
+        this.indexInDataStore -= this.numberLoadMore;
+        this.numberEndLoadMore -= this.numberLoadMore;
+        this.list = _.clone(this.dataStore.data.slice(this.indexInDataStore, this.numberEndLoadMore));
         this.loadMore = false;
       } else {
 
       }
     }
-    // }
-    // });
-    // } else {
-    // console.log('hết!');
-    // }
-  }
-
-  onScrollUp() {
-    // // if (this.list.length > this.limit) {
-    // if (!this.endPre && this.paging && this.paging.previous) {
-    //   this.loadMore = true;
-    //   let page = this.paging.previous.replace('limit=' + this.limit, 'limit=6');
-    //   this.http.get(page).subscribe(data => {
-    //     // Read the result field from the JSON response.
-    //     if (data && data.json()) {
-    //       if (data.json().paging) {
-    //         this.paging = data.json().paging;
-    //         this.endNxt = false;
-    //       } else {
-    //         this.endPre = true;
-    //       }
-    //       if (data && data.json().data.length > 0) {
-    //         let obj = [];
-    //         let _obj = _.clone(this.list);
-    //         var options = {/* … */ };
-    //         this.paging = data.json().paging;
-    //         for (let i = 0; i < data.json().data.length; i++) {
-    //           let item = data.json().data[i];
-    //           item.message ? item.message = linkifyStr(item.message, options) : '';
-    //           obj.push(item);
-    //         }
-    //         _obj.unshift(obj);
-    //         if (_obj.length > this.limit) {
-    //           _obj.splice((_obj.length - 5), 6);
-    //         }
-    //         this.list = _obj;
-    //         this.loadMore = false;
-    //         if (obj.length > this.limit) {
-    //           obj.splice(0, 6);
-    //         }
-    //         console.log(this.list);
-    //       }
-    //     }
-    //   });
-    // } else {
-    //   console.log('hết!');
-    // }
-    // // }
   }
 
   firstLoad(facebookId, scrollTop?) {
+    this.indexInDataStore = 0;
+    this.numberEndLoadMore = 0;
     // Make the HTTP request:
     this.http.get('https://graph.facebook.com/v2.10/' + facebookId + '/feed?fields=' + this.fields + '&limit=' + this.limit + '&access_token=' + this.token).subscribe(data => {
       // Read the result field from the JSON response.
       let obj = [];
       var options = {/* … */ };
       this.dataStore = _.clone(data.json());
-      this.paging = data.json().paging;
-      for (let i = 0; i < data.json().data.length; i++) {
-        let item = data.json().data[i];
+      this.paging = this.dataStore.paging;
+      for (let i = 0; i < this.dataStore.data.length; i++) {
+        let item = this.dataStore.data[i];
         item.message ? item.message = linkifyStr(item.message, options) : '';
         let comments = item.comments;
         if (comments) {
@@ -162,20 +117,16 @@ export class AppComponent implements OnInit {
         obj.push(item);
       }
       this.dataStore.data = _.clone(obj);
-      // this.list = this.dataStore.data.splice(this.numberItemsInFirstLoad, this.dataStore.data.length - this.numberItemsInFirstLoad);
-      this.list = this.dataStore.data;
+      this.list = this.dataStore.data.slice(this.indexInDataStore, this.numberItemsInFirstLoad);
+      // this.list = this.dataStore.data;
 
-      this.paging = data.json().paging;
-      for (let i = 0; i < data.json().data.length; i++) {
-        let item = data.json().data[i];
-        item.message ? item.message.linkify(options) : '';
-        // item.message.linkify(options);
-        obj.push(item);
-      }
-      this.indexInDataStore = this.numberItemsInFirstLoad - 1;
+      this.paging = this.dataStore.paging;
+      // this.indexInDataStore = this.numberItemsInFirstLoad - 1;
+      this.numberEndLoadMore = this.numberItemsInFirstLoad;
       this.loading = false;
       scrollTop ? this.scrollToTop() : '';
-      console.log(data.json());
+      console.log(this.list);
+      console.log(this.dataStore.data);
     }, err => {
       alert('Sai Facebook ID');
     });

@@ -31,7 +31,7 @@
         <source src="{{data.item.source}}" type="video/mp4">
         <source src="{{data.item.source}}" type="video/ogg"> Your browser does not support the video tag.
       </video>
-      <p style="white-space: pre-wrap;" [innerHTML]="data.item.message | emojis"></p>
+      <p style="white-space: pre-wrap;" [innerHTML]="data.item.message ? data.item.message : '' | emojis"></p>
     </mat-card-content>
     <mat-card-actions>
       <button mat-button>{{data.item.likes ? data.item.likes.count : 0}}
